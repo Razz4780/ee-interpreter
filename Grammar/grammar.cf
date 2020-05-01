@@ -1,0 +1,121 @@
+-- Programs ------------------------------------------------
+
+entrypoints Prog ;
+
+Prog.         Prog ::= [Stmt] ;
+
+separator Stmt "" ;
+
+-- Statements ----------------------------------------------
+
+SDef.         Stmt ::= "let" Ident "=" Expr ";" ;
+
+SEmpty.       Stmt ::= ";" ;
+
+SBlock.       Stmt ::= Block ;
+
+Block.        Block ::= "{" [Stmt] "}" ;
+
+SAss.         Stmt ::= Ident "=" Expr ";" ;
+
+SRet.         Stmt ::= "return" Expr ";" ;
+
+SVRet.        Stmt ::= "return" ";" ;
+
+SIf.          Stmt ::= "if" "(" Expr ")" Block  ;
+
+SIfElse.      Stmt ::= "if" "(" Expr ")" Block IfCont  ;
+
+SElif.        IfCont ::= "elif" "(" Expr ")" Block ;
+
+SElifElse.    IfCont ::= "elif" "(" Expr ")" Block IfCont ;
+
+SElse.        IfCont ::= "else" Block  ;
+
+SWhile.       Stmt ::= "while" "(" Expr ")" Block ;
+
+SExpr.        Stmt ::= Expr ";" ;
+
+-- Types ---------------------------------------------------
+
+TVoid.        Type ::= "void" ;
+
+TInt.         Type ::= "int" ;
+
+TStr.         Type ::= "str" ;
+
+TBool.        Type ::= "bool" ;
+
+TFunc.        Type ::= "(" [ParType] "->" Type ")" ;
+
+ValPar.       ParType ::= Type ;
+
+VarPar.       ParType ::= "&" Type ;
+
+separator ParType "," ;
+
+-- Operators -----------------------------------------------
+
+OPlus.        AddOp ::= "+" ;
+
+OMinus.       AddOp ::= "-" ;
+
+OTimes.       MulOp ::= "*" ;
+
+ODiv.         MulOp ::= "/" ;
+
+OMod.         MulOp ::= "%" ;
+
+OLt.          RelOp ::= "<" ;
+
+OLte.         RelOp ::= "<=" ;
+
+OGt.          RelOp ::= ">" ;
+
+OGte.         RelOp ::= ">=" ;
+
+OEq.          RelOp ::= "==" ;
+
+ONeq.         RelOp ::= "!=" ;
+
+-- Expressions ---------------------------------------------
+
+EVar.         Expr7 ::= Ident ;
+
+EInt.         Expr7 ::= Integer ;
+
+ETrue.        Expr7 ::= "true" ;
+
+EFalse.       Expr7 ::= "false" ;
+
+EStr.         Expr7 ::= String ;
+
+EFunc.        Expr7 ::= "fn" "(" [Arg] ")" "->" Type Block ;
+
+separator Arg "," ;
+
+Arg.          Arg ::= Ident ":" ParType ;
+
+EApp.         Expr6 ::= Expr7 "(" [Expr] ")" ;
+
+separator Expr "," ;
+
+ENeg.         Expr5 ::= "-" Expr6 ;
+
+ENot.         Expr5 ::= "!" Expr6 ;
+
+EMul.         Expr4 ::= Expr4 MulOp Expr5 ;
+
+EAdd.         Expr3 ::= Expr3 AddOp Expr4 ;
+
+ERel.         Expr2 ::= Expr2 RelOp Expr3 ;
+
+EAnd.         Expr1 ::= Expr2 "&&" Expr1 ;
+
+EOr.          Expr ::= Expr1 "||" Expr ;
+
+coercions Expr 7 ;
+
+-- comments ------------------------------------------------
+
+comment    "//" ;
