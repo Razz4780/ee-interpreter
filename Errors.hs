@@ -1,6 +1,6 @@
 module Errors where
 
-import Grammar.PrintGrammar
+import           Grammar.PrintGrammar
 
 data Err = Err [String] String
 

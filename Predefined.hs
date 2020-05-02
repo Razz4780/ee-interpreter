@@ -1,16 +1,16 @@
 module Predefined where
 
-import Control.Monad.Except
-import Control.Monad.State
-import Text.Read (readMaybe)
-import qualified Data.Map as M
-import Grammar.AbsGrammar
-import Errors
-import State
-import Executor
+import           Control.Monad.Except
+import           Control.Monad.State
+import qualified Data.Map             as M
+import           Errors
+import           Executor
+import           Grammar.AbsGrammar
+import           State
+import           Text.Read            (readMaybe)
 
 predefinedTypes :: [(Ident, Type)]
-predefinedTypes = 
+predefinedTypes =
   [ (Ident "printInt", TFunc [ValPar TInt] TVoid)
   , (Ident "printStr", TFunc [ValPar TStr] TVoid)
   , (Ident "readInt", TFunc [] TInt)
@@ -18,7 +18,7 @@ predefinedTypes =
   ]
 
 predefinedValues :: [(Ident, Value)]
-predefinedValues = 
+predefinedValues =
   [ (Ident "printInt", funcPrintInt)
   , (Ident "printStr", funcPrintStr)
   , (Ident "readInt", funcReadInt)

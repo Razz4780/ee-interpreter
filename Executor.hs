@@ -1,11 +1,11 @@
 module Executor where
 
-import qualified Data.Map as M
-import Control.Monad.State
-import Control.Monad.Except
-import Grammar.AbsGrammar
-import Errors
-import State
+import           Control.Monad.Except
+import           Control.Monad.State
+import qualified Data.Map             as M
+import           Errors
+import           Grammar.AbsGrammar
+import           State
 
 data StmtRet = RNone | RVal Value
 
@@ -25,7 +25,7 @@ stmtExecutor (SBlock (Block ss)) = scopeVars f
       return ret
     innerExecutor :: StmtRet -> Stmt -> Executor StmtRet
     innerExecutor RNone s = stmtExecutor s
-    innerExecutor ret _ = return ret
+    innerExecutor ret _   = return ret
 
 stmtExecutor (SAss n e) = do
   val <- exprExecutor e
@@ -57,7 +57,7 @@ stmtExecutor s@(SWhile e b) = do
       ret <- stmtExecutor $ SBlock b
       case ret of
         RNone -> stmtExecutor s
-        v -> return $ v
+        v     -> return $ v
     else return RNone
 
 stmtExecutor (SExpr e) = do
@@ -65,9 +65,9 @@ stmtExecutor (SExpr e) = do
   return RNone
 
 ifContExecutor :: IfCont -> Executor StmtRet
-ifContExecutor (SElif e b) = stmtExecutor $ SIf e b
+ifContExecutor (SElif e b)       = stmtExecutor $ SIf e b
 ifContExecutor (SElifElse e b c) = stmtExecutor $ SIfElse e b c
-ifContExecutor (SElse b) = stmtExecutor $ SBlock b
+ifContExecutor (SElse b)         = stmtExecutor $ SBlock b
 
 exprExecutor :: Expr -> Executor Value
 exprExecutor (EVar n) = do
@@ -94,7 +94,7 @@ exprExecutor (EFunc as _ b) = do
         res <- stmtExecutor $ SBlock b
         case res of
           RVal v -> return v
-          RNone -> return VVoid
+          RNone  -> return VVoid
       putArg :: VarMap -> (Arg, Expr) -> Executor VarMap
       putArg v (Arg n (VarPar _), EVar n') = do
         l <- gets $ getLoc n'
@@ -161,23 +161,23 @@ mulOp op x y = VInt $ getOp op x y
   where
     getOp :: MulOp -> Integer -> Integer -> Integer
     getOp OTimes = (*)
-    getOp ODiv = div
-    getOp OMod = mod
+    getOp ODiv   = div
+    getOp OMod   = mod
 
 addOp :: AddOp -> Integer -> Integer -> Value
 addOp op x y = VInt $ getOp op x y
   where
     getOp :: AddOp -> Integer -> Integer -> Integer
-    getOp OPlus = (+)
+    getOp OPlus  = (+)
     getOp OMinus = (-)
 
 relOp :: RelOp -> Integer -> Integer -> Value
 relOp op x y = VBool $ getOp op x y
   where
     getOp :: RelOp -> Integer -> Integer -> Bool
-    getOp OLt = (<)
+    getOp OLt  = (<)
     getOp OLte = (<=)
-    getOp OGt = (>)
+    getOp OGt  = (>)
     getOp OGte = (>=)
-    getOp OEq = (==)
+    getOp OEq  = (==)
     getOp ONeq = (/=)

@@ -1,24 +1,24 @@
 module Main where
 
-import Control.Monad (when)
-import Control.Monad.State
-import Control.Monad.Except
-import System.IO (getContents)
-import System.Environment (getArgs)
-import System.Exit (exitFailure, exitSuccess)
+import           Control.Monad        (when)
+import           Control.Monad.Except
+import           Control.Monad.State
+import           System.Environment   (getArgs)
+import           System.Exit          (exitFailure, exitSuccess)
+import           System.IO            (getContents)
 
-import qualified Grammar.LexGrammar as LG
-import qualified Grammar.ParGrammar as PaG
-import qualified Grammar.SkelGrammar as SG
+import qualified Grammar.AbsGrammar   as AG
+import qualified Grammar.ErrM         as EG
+import qualified Grammar.LexGrammar   as LG
+import qualified Grammar.ParGrammar   as PaG
 import qualified Grammar.PrintGrammar as PrG
-import qualified Grammar.AbsGrammar as AG
-import qualified Grammar.ErrM as EG
+import qualified Grammar.SkelGrammar  as SG
 
 import qualified Errors
-import qualified Static
 import qualified Executor
 import qualified Predefined
 import qualified State
+import qualified Static
 
 type ParseFun = [LG.Token] -> EG.Err AG.Prog
 
@@ -58,5 +58,5 @@ main = do
   args <- getArgs
   case args of
     ["--help"] -> usage
-    (fn:_) -> readFile fn >>= run PaG.pProg
-    _ -> usage
+    (fn:_)     -> readFile fn >>= run PaG.pProg
+    _          -> usage

@@ -1,18 +1,18 @@
 module Static where
 
-import Grammar.AbsGrammar
-import Grammar.PrintGrammar
-import qualified Data.Map as M
-import qualified Data.List as L
-import Control.Monad.Except
-import Control.Monad.State
-import Errors
+import           Control.Monad.Except
+import           Control.Monad.State
+import qualified Data.List            as L
+import qualified Data.Map             as M
+import           Errors
+import           Grammar.AbsGrammar
+import           Grammar.PrintGrammar
 
 type VarMap = M.Map Ident Type
 
 data Env = Env {
-  vars :: M.Map Ident Type,
-  rtype :: Maybe Type,
+  vars    :: M.Map Ident Type,
+  rtype   :: Maybe Type,
   defined :: [Ident]
 } deriving Show
 
@@ -81,9 +81,9 @@ stmtChecker = withTraceback stmtChecker'
     stmtChecker' (SExpr e) = void $ exprChecker e
 
     ifContChecker :: IfCont -> Checker ()
-    ifContChecker (SElif e b) = stmtChecker' $ SIf e b
+    ifContChecker (SElif e b)       = stmtChecker' $ SIf e b
     ifContChecker (SElifElse e b c) = stmtChecker' $ SIfElse e b c
-    ifContChecker (SElse b) = stmtChecker $ SBlock b
+    ifContChecker (SElse b)         = stmtChecker $ SBlock b
     condBoolChecker :: Expr -> Checker ()
     condBoolChecker e = do
       t <- exprChecker e
@@ -96,7 +96,7 @@ exprChecker = withTraceback exprChecker'
       v <- gets vars
       case M.lookup n v of
         Nothing -> throwError $ staticErr "variable not defined"
-        Just t -> return t
+        Just t  -> return t
 
     exprChecker' (EInt _) = return TInt
 
