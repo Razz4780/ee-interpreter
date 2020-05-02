@@ -17,3 +17,9 @@ printErrors (Err code msg) = do
     printContext context = do
       putStrLn "Inside code:"
       putStrLn context
+
+runtimeErr :: String -> Err
+runtimeErr msg = Err [] $ "runtime error: " ++ msg
+
+staticErr :: String -> Err
+staticErr msg = Err [] $ "static check error: " ++ msg

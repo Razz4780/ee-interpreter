@@ -1,9 +1,11 @@
+module Static where
+
 import Grammar.AbsGrammar
 import Grammar.PrintGrammar
 import qualified Data.Map as M
+import qualified Data.List as L
 import Control.Monad.Except
 import Control.Monad.State
-import Data.List as L
 import Errors
 
 type VarMap = M.Map Ident Type
@@ -15,9 +17,6 @@ data Env = Env {
 } deriving Show
 
 type Checker a = StateT Env (Except Err) a
-
-staticErr :: String -> Err
-staticErr msg = Err [] $ "static check error: " ++ msg
 
 withTraceback :: Print a => (a -> Checker b) -> (a -> Checker b)
 withTraceback c s = catchError (c s) handler
