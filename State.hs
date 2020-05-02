@@ -9,9 +9,7 @@ import Errors
 
 type Executor a = StateT ProgState (ExceptT Err IO) a
 
-data AInfo = AVar Ident | AVal Ident
-
-data Value = VInt Integer | VBool Bool | VStr String | VVoid | VFunc [AInfo] (Executor Value)
+data Value = VInt Integer | VBool Bool | VStr String | VVoid | VFunc ([Expr] -> Executor Value)
 
 type VarMap = M.Map Ident Int
 
@@ -23,26 +21,34 @@ data ProgState = ProgState {
     next :: Int
 }
 
-getVal :: Ident -> ProgState -> Value
-getVal n (ProgState vr vl _) =
-  let l = fromJust $ M.lookup n vr
-  in fromJust $ M.lookup l vl
+getLoc :: Ident -> ProgState -> Int
+getLoc n (ProgState vr _ _) = fromJust $ M.lookup n vr
 
-insertVal :: Ident -> Value -> ProgState -> ProgState
-insertVal n v (ProgState vr vl nxt) =
+getVal :: Ident -> ProgState -> Value
+getVal n s@(ProgState _ vl _) = fromJust $ M.lookup (getLoc n s) vl
+
+defVal :: Ident -> Value -> ProgState -> ProgState
+defVal n v (ProgState vr vl nxt) =
   let vr' = M.insert n nxt vr
       vl' = M.insert nxt v vl
   in ProgState vr' vl' $ nxt + 1
 
 assVal :: Ident -> Value -> ProgState -> ProgState
-assVal n v (ProgState vr vl nxt) = 
-  let loc = fromJust $ M.lookup n vr
-  in ProgState vr (M.insert loc v vl) nxt
+assVal n v s@(ProgState vr vl nxt) = ProgState vr (M.insert (getLoc n s) v vl) nxt
+
+initState :: [(Ident, Value)] -> ProgState
+initState v = foldr insertPair (ProgState M.empty M.empty 0) v
+  where
+    insertPair :: (Ident, Value) -> ProgState -> ProgState
+    insertPair (n, v) (ProgState vr vl nxt) = 
+      ProgState (M.insert n nxt vr) (M.insert nxt v vl) $ nxt + 1
 
 putVars :: VarMap -> ProgState -> ProgState
 putVars vr (ProgState _ vl nxt) = ProgState vr vl nxt
 
-linkNames :: Ident -> Ident -> ProgState -> ProgState
-linkNames n1 n2 (ProgState vr vl nxt) =
-  let l = fromJust $ M.lookup n2 vr
-  in ProgState (M.insert n1 l vr) vl nxt
+scopeVars :: Executor a -> Executor a
+scopeVars e = do
+  vr <- gets vars
+  res <- e
+  modify $ putVars vr
+  return res

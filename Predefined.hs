@@ -3,62 +3,60 @@ module Predefined where
 import Control.Monad.Except
 import Control.Monad.State
 import Text.Read (readMaybe)
+import qualified Data.Map as M
 import Grammar.AbsGrammar
 import Errors
 import State
+import Executor
 
 predefinedTypes :: [(Ident, Type)]
-predefinedTypes = [
-  (Ident "printInt", TFunc [VarPar TInt] TVoid),
-  (Ident "printStr", TFunc [VarPar TStr] TStr),
-  (Ident "readInt", TFunc [] TInt),
-  (Ident "readStr", TFunc [] TStr)
+predefinedTypes = 
+  [ (Ident "printInt", TFunc [ValPar TInt] TVoid)
+  , (Ident "printStr", TFunc [ValPar TStr] TVoid)
+  , (Ident "readInt", TFunc [] TInt)
+  , (Ident "readStr", TFunc [] TStr)
   ]
 
 predefinedValues :: [(Ident, Value)]
-predefinedValues = [
-  (Ident "printInt", funcPrintInt),
-  (Ident "printStr", funcPrintStr),
-  (Ident "readInt", funcReadInt),
-  (Ident "readStr", funcReadStr)
+predefinedValues = 
+  [ (Ident "printInt", funcPrintInt)
+  , (Ident "printStr", funcPrintStr)
+  , (Ident "readInt", funcReadInt)
+  , (Ident "readStr", funcReadStr)
   ]
 
 funcPrintInt :: Value
-funcPrintInt = VFunc [AVar parName] f
+funcPrintInt = VFunc f
   where
-    parName :: Ident
-    parName = Ident "a"
-    f :: Executor Value
-    f = do
-      VInt val <- gets $ getVal parName
-      liftIO $ print val
+    f :: [Expr] -> Executor Value
+    f (e:_) = do
+      VInt val <- exprExecutor e
+      liftIO $ putStr $ show val
       return VVoid
 
 funcPrintStr :: Value
-funcPrintStr = VFunc [AVar parName] f
+funcPrintStr = VFunc f
   where
-    parName :: Ident
-    parName = Ident "a"
-    f :: Executor Value
-    f = do
-      VStr val <- gets $ getVal parName
+    f :: [Expr] -> Executor Value
+    f (e:_) = do
+      VStr val <- exprExecutor e
       liftIO $ putStr val
       return VVoid
 
 funcReadInt :: Value
-funcReadInt = VFunc [] f
+funcReadInt = VFunc f
   where
-    f :: Executor Value
-    f = do
+    f :: [Expr] -> Executor Value
+    f _ = do
       str <- liftIO $ getLine
       case readMaybe str of
         Nothing -> throwError $ runtimeErr $ "could not convert " ++ show str ++ " to int"
         Just v -> return $ VInt v
 
 funcReadStr :: Value
-funcReadStr = VFunc [] f
+funcReadStr = VFunc f
   where
-    f :: Executor Value
-    f = do
+    f :: [Expr] -> Executor Value
+    f _ = do
       str <- liftIO $ getLine
       return $ VStr str

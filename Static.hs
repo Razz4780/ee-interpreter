@@ -16,6 +16,12 @@ data Env = Env {
   defined :: [Ident]
 } deriving Show
 
+initEnv :: [(Ident, Type)] -> Env
+initEnv t = foldr insertPair (Env M.empty Nothing []) t
+  where
+    insertPair :: (Ident, Type) -> Env -> Env
+    insertPair (n, t) (Env vr r d) = Env (M.insert n t vr) r d
+
 type Checker a = StateT Env (Except Err) a
 
 withTraceback :: Print a => (a -> Checker b) -> (a -> Checker b)
@@ -35,7 +41,8 @@ stmtChecker = withTraceback stmtChecker'
       put $ Env (M.insert n t v) r (n:d)
     stmtChecker' SEmpty = return ()
     stmtChecker' (SBlock (Block (stmts))) = do
-      env <- get
+      env@(Env v r d) <- get
+      put $ Env v r []
       mapM_ stmtChecker stmts
       put env
     stmtChecker' (SAss n e) = do
@@ -128,7 +135,9 @@ exprChecker = withTraceback exprChecker'
     exprChecker' (ENot e) = exactTypeChecker TBool [e]
     exprChecker' (EMul e1 _ e2) = exactTypeChecker TInt [e1, e2]
     exprChecker' (EAdd e1 _ e2) = exactTypeChecker TInt [e1, e2]
-    exprChecker' (ERel e1 _ e2) = exactTypeChecker TInt [e1, e2]
+    exprChecker' (ERel e1 _ e2) = do
+      exactTypeChecker TInt [e1, e2]
+      return TBool
     exprChecker' (EAnd e1 e2) = exactTypeChecker TBool [e1, e2]
     exprChecker' (EOr e1 e2) = exactTypeChecker TBool [e1, e2]
     exactTypeChecker :: Type -> [Expr] -> Checker Type

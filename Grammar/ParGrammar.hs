@@ -5,7 +5,7 @@
 #endif
 {-# OPTIONS_GHC -fno-warn-incomplete-patterns -fno-warn-overlapping-patterns #-}
 module Grammar.ParGrammar where
-import Grammar.AbsGrammar
+import Grammar.AbsGrammar as AbsGrammar
 import Grammar.LexGrammar
 import Grammar.ErrM
 import qualified Data.Array as Happy_Data_Array
