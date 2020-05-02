@@ -90,6 +90,7 @@ exprExecutor (EFunc as _ b) = do
       ex v es = do
         v' <- foldM putArg v $ zip as es
         modify $ putVars v'
+        modify $ defVal (Ident "this") $ VFunc $ scopeVars . ex v
         res <- stmtExecutor $ SBlock b
         case res of
           RVal v -> return v
