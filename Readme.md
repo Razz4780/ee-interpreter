@@ -25,9 +25,13 @@ underscores. Identifiers do not start with a digit.
 
 ## Statements
 Variable definition
-```let <variable name> = <expression>;```
+```
+let <variable name> = <expression>;
+```
 Empty
-```;```
+```
+;
+```
 Block
 ```
 {
