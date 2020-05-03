@@ -1,0 +1,19 @@
+let executor = fn (f: (-> void)) -> (-> void) {
+    let a = 0;
+    return fn () -> void {
+        f();
+        a = a + 1;
+        printStr("You have called me ");
+        printInt(a);
+        printStr(" times\n");
+    };
+};
+let printer = fn () -> void {
+    printStr("Hello\n");;
+};
+let myExecutor = executor(printer);
+let a = 5;
+while (a > 0) {
+    myExecutor();
+    a = a - 1;
+}

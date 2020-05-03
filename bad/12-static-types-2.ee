@@ -1,0 +1,3 @@
+let func = fn () -> void {
+    return 2;
+};

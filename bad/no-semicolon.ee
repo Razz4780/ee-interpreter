@@ -1,0 +1,4 @@
+let a = fn () -> void {
+    printStr("hello\n");
+}
+a();

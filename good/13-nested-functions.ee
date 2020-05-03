@@ -1,0 +1,15 @@
+let fun = fn () -> void {
+    let a = 1;
+    let fun = fn () -> void {
+        let a = 2;
+        let fun = fn () -> void {
+            let a = 3;
+            printStr("Hello ");
+            printInt(a);
+            printStr("\n");
+        };
+        fun();
+    };
+    fun();
+};
+fun();

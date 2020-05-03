@@ -1,0 +1,4 @@
+let fun = fn (x: int) -> void {
+
+};
+fun(false);

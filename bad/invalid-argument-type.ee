@@ -1,0 +1,7 @@
+let fun = fn (lambda: (-> void)) -> void {
+    lambda();
+};
+let p = fn () -> int {
+    return 2;
+};
+fun(p);

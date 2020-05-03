@@ -1,0 +1,33 @@
+let increment = fn (x: &int) -> void {
+    x = x + 1;
+};
+let incremented = fn (x: int) -> int {
+    x = x + 1;
+    return x;
+};
+let val = 0;
+while (val < 4) {
+    increment(val);
+}
+let oldVal = val;
+let newVal = incremented(val);
+if (newVal == val) {
+    printStr("We should not be here...\n");
+} elif (val != oldVal) {
+    printStr("We should not be here either...\n");
+} else {
+    printStr("oldVal: ");
+    printInt(oldVal);
+    printStr("\nval: ");
+    printInt(val);
+    printStr("\nnewVal: ");
+    printInt(newVal);
+    printStr("\n");
+}
+let nothingSmart = fn (x: int) -> void {
+    if (x > 0) {
+        printStr("Wow\n");
+        this(x - 1);
+    }
+};
+nothingSmart(val);

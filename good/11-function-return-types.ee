@@ -1,0 +1,14 @@
+let a = fn (x: bool) -> bool {
+    return x;
+};
+let b = fn (x: int) -> int {
+    return x;
+};
+let c = fn (x: str) -> str {
+    return x;
+};
+if (a(true)) {
+    if (b(5) == 5) {
+        printStr(c("Hello there\n"));
+    }
+}

@@ -1,0 +1,14 @@
+let a = 6;
+{
+    let a = "Local\n";
+    printStr(a);
+}
+printInt(a);
+printStr("\n");
+let func = fn () -> void {
+    let a = true;
+    if (a) {
+        printStr("true\n");
+    }
+};
+func();

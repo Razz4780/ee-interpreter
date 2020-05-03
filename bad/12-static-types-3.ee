@@ -1,0 +1,3 @@
+let func = fn () -> int {
+    let x = 1;
+};

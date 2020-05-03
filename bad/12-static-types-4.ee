@@ -1,0 +1,3 @@
+if (3) {
+    printStr("Oh boi\n");
+}

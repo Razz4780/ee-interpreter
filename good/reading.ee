@@ -1,0 +1,6 @@
+let input = readInt();
+while (input > 0) {
+    input = input - 1;
+    printInt(input);
+    printStr("\n");
+}
