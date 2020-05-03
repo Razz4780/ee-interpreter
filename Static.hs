@@ -146,6 +146,7 @@ exprChecker = withTraceback exprChecker'
       ft <- exprChecker efun
       case ft of
         TFunc ps rt -> do
+            when (length ps /= length eargs) $ throwError $ staticErr "invalid arguments count"
             mapM_ typeMatcher $ zip ps eargs
             return rt
         _ -> throwError $ staticErr "expression is not a function"
