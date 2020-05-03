@@ -37,15 +37,25 @@ Block
 }
 ```
 Assignment
-```<variable name> = <expression>;```
+```
+<variable name> = <expression>;
+```
 Return
-```return [<expression>];```
+```
+return [<expression>];
+```
 If elif else
-```if (<expression>) <block> (elif (<expression>) <block>)* [else <block>]```
+```
+if (<expression>) <block> (elif (<expression>) <block>)* [else <block>]
+```
 While
-```while (<expression>) <block>```
+```
+while (<expression>) <block>
+```
 Expression
-```<expression>;```
+```
+<expression>;
+```
 
 ## Boolean expressions
 Boolean expressions are evaluated lazily.
